@@ -44,7 +44,7 @@ public class KafkaDaoFactory implements DaoFactory{
 
     @Override
     public <T extends Dao> T create() throws KafkaCollectorException{
-        Dao dao = new KafkaDao(new JmxClient(this.ip, this.port));
+        Dao dao = new KafkaDao(new JmxClient(this.ip, this.port), this.ip, this.port);
         return (T) dao;
     }
 }

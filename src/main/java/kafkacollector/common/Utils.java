@@ -30,9 +30,6 @@ import static kafkacollector.config.AppConfigs.OBJECTNAME_TYPE_REGEX;
  * limitations under the License.
  */
 final public class Utils {
-
-    private static final Pattern typePattern = Pattern.compile(OBJECTNAME_TYPE_REGEX);
-    private static final Pattern namePattern = Pattern.compile(OBJECTNAME_NAME_REGEX);
     private Utils() {
     }
 

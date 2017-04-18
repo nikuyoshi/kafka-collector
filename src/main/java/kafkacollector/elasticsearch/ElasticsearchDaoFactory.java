@@ -46,14 +46,15 @@ public class ElasticsearchDaoFactory implements DaoFactory {
         Properties prop = System.getProperties();
         String[] elasticsearchServers = prop.getProperty(ELASTICSEARCH_SERVERS).split(",");
         HttpHost[] httpHostList = new HttpHost[elasticsearchServers.length];
-        int i = 0;
+        int i = 0, port = 0;
+        String ip = null;
         for (String server : elasticsearchServers) {
             if (Utils.checkString(server, IP_PORT_REGEX)) {
                 log.error(String.format("Illegal URI format: %s", server));
                 break;
             }
-            String ip = server.split(":")[0];
-            int port = Integer.valueOf(server.split(":")[1]);
+            ip = server.split(":")[0];
+            port = Integer.valueOf(server.split(":")[1]);
             HttpHost httpHost = new HttpHost(ip, port, "Http");
             httpHostList[i++] = httpHost;
         }
@@ -62,7 +63,7 @@ public class ElasticsearchDaoFactory implements DaoFactory {
         for(HttpHost host : httpHostList){
             log.info(String.format("Connection is successful. %s", host.toString()));
         }
-        Dao dao = new ElasticsearchDao(client);
+        Dao dao = new ElasticsearchDao(client, ip, String.valueOf(port));
         return (T) dao;
     }
 }

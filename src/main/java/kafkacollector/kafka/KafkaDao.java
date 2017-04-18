@@ -41,9 +41,11 @@ import kafkacollector.exception.KafkaCollectorException;
 public class KafkaDao implements Dao {
     private static final Logger log = LoggerFactory.getLogger(KafkaDao.class);
     private final JmxClient jmxClient;
+    private final String host;
 
-    public KafkaDao(JmxClient jmxClient){
+    public KafkaDao(JmxClient jmxClient, String ip, String port){
         this.jmxClient = jmxClient;
+        this.host = String.format("%s:%s", ip, port);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class KafkaDao implements Dao {
             MBeanServerConnection mBeanServerConnection = jmxClient.getJmxConnector().getMBeanServerConnection();
             Set<ObjectName> objectNames = mBeanServerConnection.queryNames(null, null);
             for(ObjectName objectName : objectNames) {
-                if(objectName.toString().matches("java.lang:type=MemoryPool,name=Metaspace")) break;
+                if(objectName.toString().matches("^java.*")) break;
                 MBeanInfo mbeanInfo = mBeanServerConnection.getMBeanInfo(objectName);
                 MBeanAttributeInfo[] mBeanAttributeInfoList = mbeanInfo.getAttributes();
                 Map<String, Object> map = DataChannel.getKafkaMonitoringData();
@@ -70,8 +72,10 @@ public class KafkaDao implements Dao {
                 for(MBeanAttributeInfo info : mBeanAttributeInfoList){
                     String attributeName = info.getName();
                     String attributeValues = mBeanServerConnection.getAttribute(objectName, info.getName()).toString();
+                    log.debug(String.format("Host: %s, ObjectName: %s, AttributeName: %s, AttributeValues: %s", host, objectName, attributeName, attributeValues));
                     attributeInfoMap.put(attributeName, attributeValues);
                 }
+                attributeInfoMap.put("Host", host);
                 map.put(objectName.toString(), attributeInfoMap);
             }
         } catch (InstanceNotFoundException e) {

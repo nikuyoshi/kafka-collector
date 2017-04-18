@@ -40,9 +40,11 @@ import static kafkacollector.common.Utils.getObjectName;
 public class ElasticsearchDao implements Dao {
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchDao.class);
     private final RestClient restClient;
+    private final String host;
 
-    public ElasticsearchDao(RestClient restClient){
+    public ElasticsearchDao(RestClient restClient, String ip, String port){
         this.restClient = restClient;
+        this.host = ip + ":" + port;
     }
 
     @Override
@@ -61,10 +63,10 @@ public class ElasticsearchDao implements Dao {
                 serialized = getObjectName(objectName);
                 String index = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), LocalDateTime.now());
                 String result = mapper.writeValueAsString(data.get(objectName));
-                log.debug(String.format("HTTP request entity: %s", result));
+                log.debug(String.format("HTTP Request URL: %s, Request entity:%s", host, result));
                 httpEntity = new NStringEntity(result, ContentType.APPLICATION_JSON);
                 Response response = restClient.performRequest("PUT", index, Collections.<String, String>emptyMap(), httpEntity);
-                log.info(String.format("Response : %s", response.toString()));
+                log.info(String.format("HTTP Response URL: %s, Response Body: %s", host, response.toString()));
             }
         } catch (JsonProcessingException e) {
             throw new KafkaCollectorException(e);
