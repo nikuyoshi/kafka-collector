@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class ElasticsearchDao implements Dao {
             Map<String, String> serialized;
             for(String objectName : data.keySet()){
                 serialized = getObjectName(objectName);
-                String index = String.format("/%s/%s/1", serialized.get("index"), serialized.get("type"));
+                String index = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), LocalDateTime.now());
                 String result = mapper.writeValueAsString(data.get(objectName));
                 log.debug(String.format("HTTP request entity: %s", result));
                 httpEntity = new NStringEntity(result, ContentType.APPLICATION_JSON);
