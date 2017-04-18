@@ -3,7 +3,12 @@ package kafkacollector.kafka;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.util.resources.LocaleData;
+
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -75,7 +80,8 @@ public class KafkaDao implements Dao {
                     log.debug(String.format("Host: %s, ObjectName: %s, AttributeName: %s, AttributeValues: %s", host, objectName, attributeName, attributeValues));
                     attributeInfoMap.put(attributeName, attributeValues);
                 }
-                attributeInfoMap.put("Host", host);
+                attributeInfoMap.put("host", host);
+                attributeInfoMap.put("date", LocalDateTime.now().toString());
                 map.put(objectName.toString(), attributeInfoMap);
             }
         } catch (InstanceNotFoundException e) {
