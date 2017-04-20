@@ -66,7 +66,7 @@ public class KafkaDao implements Dao {
             MBeanServerConnection mBeanServerConnection = jmxClient.getJmxConnector().getMBeanServerConnection();
             Set<ObjectName> objectNames = mBeanServerConnection.queryNames(null, null);
             for(ObjectName objectName : objectNames) {
-                if(objectName.toString().matches("^java.*")) break;
+                if(objectName.toString().matches("^java.*|.*ClusterId.*")) continue;
                 MBeanInfo mbeanInfo = mBeanServerConnection.getMBeanInfo(objectName);
                 MBeanAttributeInfo[] mBeanAttributeInfoList = mbeanInfo.getAttributes();
                 Map<String, Object> map = DataChannel.getKafkaMonitoringData();
