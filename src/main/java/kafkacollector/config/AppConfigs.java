@@ -24,6 +24,7 @@ public final class AppConfigs {
     public static final String IP_PORT_REGEX = "\\d{1,3}(?:\\.\\d{1,3}){3}(?::\\d{1,5})?\n";
     public static final String OBJECTNAME_TYPE_REGEX = "^([.+]*):type=([.+]*)";
     public static final String OBJECTNAME_NAME_REGEX = "^,name=([.+]*),";
+    public static final String FLOAT_PATTER_REGEX = "^([+-]?\\d*\\.?\\d*)$";
     public static final int NUMBER_OF_THREAD_POOL = 5;
     public static final int TASK_TIMEOUT_MINUTES = 10;
 }

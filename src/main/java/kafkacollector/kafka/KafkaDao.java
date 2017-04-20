@@ -4,14 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
@@ -24,6 +21,8 @@ import kafkacollector.common.Dao;
 import kafkacollector.common.DataChannel;
 import kafkacollector.common.JmxClient;
 import kafkacollector.exception.KafkaCollectorException;
+
+import static kafkacollector.config.AppConfigs.FLOAT_PATTER_REGEX;
 
 /**
  * Copyright 2017 Hiroki Uchida
@@ -70,12 +69,16 @@ public class KafkaDao implements Dao {
                 MBeanInfo mbeanInfo = mBeanServerConnection.getMBeanInfo(objectName);
                 MBeanAttributeInfo[] mBeanAttributeInfoList = mbeanInfo.getAttributes();
                 Map<String, Object> map = DataChannel.getKafkaMonitoringData();
-                Map<String, String> attributeInfoMap = new HashMap<>();
+                Map<String, Object> attributeInfoMap = new HashMap<>();
                 for(MBeanAttributeInfo info : mBeanAttributeInfoList){
                     String attributeName = info.getName();
-                    String attributeValues = mBeanServerConnection.getAttribute(objectName, info.getName()).toString();
-                    log.debug(String.format("Host: %s, ObjectName: %s, AttributeName: %s, AttributeValues: %s", host, objectName, attributeName, attributeValues));
-                    attributeInfoMap.put(attributeName, attributeValues);
+                    String attributeValue = mBeanServerConnection.getAttribute(objectName, info.getName()).toString();
+                    log.debug(String.format("Host: %s, ObjectName: %s, AttributeName: %s, AttributeValues: %s", host, objectName, attributeName, attributeValue));
+                    if(Pattern.matches(FLOAT_PATTER_REGEX, attributeValue)){
+                        attributeInfoMap.put(attributeName, Double.parseDouble(attributeValue));
+                        continue;
+                    }
+                    attributeInfoMap.put(attributeName, attributeValue);
                 }
                 attributeInfoMap.put("host", host);
                 attributeInfoMap.put("@timestamp", LocalDateTime.now().toString());
