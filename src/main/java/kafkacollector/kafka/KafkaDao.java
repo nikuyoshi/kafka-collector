@@ -4,7 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +82,8 @@ public class KafkaDao implements Dao {
                     attributeInfoMap.put(attributeName, attributeValue);
                 }
                 attributeInfoMap.put("host", host);
-                attributeInfoMap.put("@timestamp", LocalDateTime.now().toString());
+                String now = DateTimeFormatter.ofPattern("YYYY-MM-dd'T'HH:mm:ssZ").format(ZonedDateTime.now());
+                attributeInfoMap.put("@timestamp", now);
                 map.put(objectName.toString(), attributeInfoMap);
             }
         } catch (InstanceNotFoundException e) {

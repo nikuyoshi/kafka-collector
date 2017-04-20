@@ -4,16 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import kafkacollector.exception.KafkaCollectorException;
-
-import static kafkacollector.config.AppConfigs.OBJECTNAME_NAME_REGEX;
-import static kafkacollector.config.AppConfigs.OBJECTNAME_TYPE_REGEX;
 
 /**
  * Copyright 2017 Hiroki Uchida

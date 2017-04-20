@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,9 +62,9 @@ public class ElasticsearchDao implements Dao {
             Map<String, String> serialized = new HashMap<>();
             for(String objectName : data.keySet()){
                 String[] splitted = getObjectName(objectName);
-                serialized.put("index", String.format("%s-%s", splitted[0], LocalDate.now()));
+                serialized.put("index", String.format("%s-%s", splitted[0], ZonedDateTime.now().toLocalDate()));
                 serialized.put("type", splitted[1]);
-                String url = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), LocalDateTime.now());
+                String url = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), ZonedDateTime.now().toLocalDate());
                 String body = mapper.writeValueAsString(data.get(objectName));
                 log.debug(String.format("HTTP Request URL: %s, Request entity:%s", host, body));
                 httpEntity = new NStringEntity(body, ContentType.APPLICATION_JSON);
