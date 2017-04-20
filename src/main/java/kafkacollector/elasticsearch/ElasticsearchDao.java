@@ -64,7 +64,7 @@ public class ElasticsearchDao implements Dao {
                 String[] splitted = getObjectName(objectName);
                 serialized.put("index", String.format("%s-%s", splitted[0], ZonedDateTime.now().toLocalDate()));
                 serialized.put("type", splitted[1]);
-                String url = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), ZonedDateTime.now().toLocalDate());
+                String url = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), ZonedDateTime.now().toLocalDateTime());
                 String body = mapper.writeValueAsString(data.get(objectName));
                 log.debug(String.format("HTTP Request URL: %s, Request entity:%s", host, body));
                 httpEntity = new NStringEntity(body, ContentType.APPLICATION_JSON);
