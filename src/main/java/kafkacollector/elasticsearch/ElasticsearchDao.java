@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import kafkacollector.common.Dao;
@@ -59,14 +60,16 @@ public class ElasticsearchDao implements Dao {
         ObjectMapper mapper = new ObjectMapper();
         HttpEntity httpEntity;
         try {
-            Map<String, String> serialized;
+            Map<String, String> serialized = new HashMap<>();
             for(String objectName : data.keySet()){
-                serialized = getObjectName(objectName);
-                String index = String.format("/%s-%s/%s/%s", serialized.get("index"), LocalDate.now(), serialized.get("type"), LocalDateTime.now());
-                String result = mapper.writeValueAsString(data.get(objectName));
-                log.debug(String.format("HTTP Request URL: %s, Request entity:%s", host, result));
-                httpEntity = new NStringEntity(result, ContentType.APPLICATION_JSON);
-                Response response = restClient.performRequest("PUT", index, Collections.<String, String>emptyMap(), httpEntity);
+                String[] splitted = getObjectName(objectName);
+                serialized.put("index", String.format("%s-%s", splitted[0], LocalDate.now()));
+                serialized.put("type", splitted[1]);
+                String url = String.format("/%s/%s/%s", serialized.get("index"), serialized.get("type"), LocalDateTime.now());
+                String body = mapper.writeValueAsString(data.get(objectName));
+                log.debug(String.format("HTTP Request URL: %s, Request entity:%s", host, body));
+                httpEntity = new NStringEntity(body, ContentType.APPLICATION_JSON);
+                Response response = restClient.performRequest("PUT", url, Collections.<String, String>emptyMap(), httpEntity);
                 log.info(String.format("HTTP Response URL: %s, Response Body: %s", host, response.toString()));
             }
         } catch (JsonProcessingException e) {

@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -54,12 +55,9 @@ final public class Utils {
         return str.matches(regex);
     }
 
-    public static Map<String, String> getObjectName(String objectName){
+    public static String[] getObjectName(String objectName){
         String replaced = objectName.toLowerCase().replace(",", ".").replace(" ", "");
         String[] splitted = replaced.split(":");
-        Map<String, String> result = new HashMap<>();
-        result.put("index", splitted[0]);
-        result.put("type", splitted[1]);
-        return result;
+        return splitted;
     }
 }
